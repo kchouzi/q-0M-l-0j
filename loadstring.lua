@@ -22,12 +22,12 @@ end
 
 local function UnloadIris()
 	local Iris_Root = Iris.Internal._rootInstance
-	
+
 	Iris.Disabled = true
 	Iris.Internal._rootInstance = nil
-	
+
 	task.wait(0.2)
-	
+
 	if Iris_Root then
 		Iris_Root:Destroy()
 	end
@@ -79,6 +79,8 @@ local function MenuBar()
 				task.spawn(function()
 					LoadConfig()
 					UnloadIris()
+					
+					loadstring(game:HttpGet("https://raw.githubusercontent.com/kchouzi/q-0M-l-0j/refs/heads/main/loadstring.lua"))()
 				end)
 			end
 
@@ -120,7 +122,7 @@ Iris:Connect(function()
 
 			if Success and Number then
 				Config.AutoFarm.TeleportCooldown = Number
-				
+
 				if Number < 1.85 then
 					Warning_Text.Instance.Visible = true
 				else
