@@ -14,99 +14,9 @@ local Config = {
 	}
 }
 
-local GlobalConfig = _G.Config
-if GlobalConfig then
-	Config = _G.Config
-	_G.Config = nil
-end
-
-local function UnloadIris()
-	local Iris_Root = Iris.Internal._rootInstance
-
-	Iris.Disabled = true
-	Iris.Internal._rootInstance = nil
-
-	task.wait(0.2)
-
-	if Iris_Root then
-		Iris_Root:Destroy()
-	end
-end
-
-local function SaveConfig()
-	local Success, Result = pcall(function()
-		return HttpService:JSONEncode(Config)
-	end)
-
-	if Success and Result then
-		if not isfolder("MM2-AutoFarm") then
-			makefolder("MM2-AutoFarm")
-		end
-
-		if isfolder("MM2-AutoFarm") then
-			writefile("MM2-AutoFarm/Saves.txt", Result)
-
-			print(Result)
-		end
-	end
-end
-
-local function LoadConfig()
-	if isfolder("MM2-AutoFarm") and isfile("MM2-AutoFarm/Saves.txt") then
-		local ReadFile = readfile("MM2-AutoFarm/Saves.txt")
-
-		if ReadFile then
-			local Success, Result = pcall(function()
-				return HttpService:JSONDecode(ReadFile)
-			end)
-
-			if Success and Result then
-				_G.Config = Result
-
-				print(Result)
-			end
-		end
-	end
-end
-
-local function MenuBar()
-	Iris.MenuBar()
-	do
-		Iris.Menu({"File"})
-		do 
-			local LoadConfig_MenuItem = Iris.MenuItem({"Load Config"})
-			if LoadConfig_MenuItem.clicked() then
-				task.spawn(function()
-					LoadConfig()
-					UnloadIris()
-					
-					loadstring(game:HttpGet("https://raw.githubusercontent.com/kchouzi/q-0M-l-0j/refs/heads/main/loadstring.lua"))()
-				end)
-			end
-
-			local SaveConfig_MenuItem = Iris.MenuItem({"Save Config"})
-			if SaveConfig_MenuItem.clicked() then
-				task.spawn(SaveConfig)
-			end
-		end
-		Iris.End()
-
-		Iris.Menu({"View"})
-		do 
-			Iris.MenuItem({"AutoFarm"})
-		end
-		Iris.End()
-	end
-	Iris.End()
-end
-
 Iris:Connect(function()
 	Iris.Window({"MM2 AutoFarm - v1.0.0hlw"})
 	do
-		do
-			MenuBar()
-		end
-
 		Iris.SeparatorText({"Main"})
 		do
 			local AutoFarmEnabled_Checkbox = Iris.Checkbox({"AutoFarm Enabled"}, {isChecked = Config.AutoFarm.Enabled})
